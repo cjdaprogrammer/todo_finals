@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Todo List</title>
+    <style>
+        /* Body background - neon colors changing */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(45deg, #ff0066, #33ccff, #00cc66, #ffcc00);
+            background-size: 400% 400%;
+            animation: backgroundAnimation 15s ease infinite;
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px #f39c12;
+        }
+
+        @keyframes backgroundAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Container with neon border and blur effect */
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(45, 45, 68, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #f39c12;
+            text-shadow: 0 0 10px #fff, 0 0 20px #f39c12;
+            margin-bottom: 30px;
+        }
+
+        /* Add Task Form */
+        input[type="text"] {
+            padding: 12px;
+            width: 80%;
+            margin-right: 10px;
+            border-radius: 5px;
+            border: 2px solid #f39c12;
+            background-color: transparent;
+            color: white;
+            font-size: 1rem;
+        }
+
+        button {
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+            color: white;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        /* Task Styling */
+        .task {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 20px 0;
+            font-size: 1.2rem;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .task.done {
+            color: #7f8c8d;
+        }
+
+        .task-name {
+            flex-grow: 1;
+            margin-left: 10px;
+            word-wrap: break-word;
+            display: inline-block;
+        }
+
+        .task-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        /* Emoticons */
+        .emoticon {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+
+        /* Neon font style */
+        .neon-text {
+            text-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff, 0 0 20px #ff00ff;
+        }
+
+        /* Button Colors */
+        .edit-button {
+            background-color: #3498db; /* Blue for Edit */
+        }
+
+        .edit-button:hover {
+            background-color: #2980b9;
+        }
+
+        .delete-button {
+            background-color: #e74c3c; /* Red for Delete */
+        }
+
+        .delete-button:hover {
+            background-color: #c0392b;
+        }
+
+        .done-button {
+            background-color: #2ecc71; /* Green for Done */
+        }
+
+        .done-button:hover {
+            background-color: #27ae60;
+        }
+
+        .add-task-button {
+            background-color: #f39c12; /* Vibrant yellow for Add Task button */
+            margin-top: 20px;
+        }
+
+        .add-task-button:hover {
+            background-color: #e67e22;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="neon-text">Todo List</h1>
+
+    <!-- Add Task Form -->
+    <form method="POST" action="{% url 'add_task' %}">
+        {% csrf_token %}
+        <input type="text" name="task_name" placeholder="Add a new task" required>
+        <button class="add-task-button" type="submit">Add Task</button>
+    </form>
+
+    <!-- Task List -->
+    {% for task in tasks %}
+        <div class="task {% if task.is_done %}done{% endif %}" id="task-{{ task.id }}">
+            <!-- Emoticon for task -->
+            <span class="emoticon" id="emoticon-{{ task.id }}">
+                {% if "work" in task.task_name|lower %}
+                    💼
+                {% elif "volleyball" in task.task_name|lower %}
+                    🏐
+                {% elif "table tennis" in task.task_name|lower %}
+                    🏓
+                {% elif "basketball" in task.task_name|lower %}
+                    🏀
+                {% elif "tennis" in task.task_name|lower %}
+                    🎾
+                {% elif "chess" in task.task_name|lower %}
+                    ♟️
+                {% elif "archery" in task.task_name|lower %}
+                    🏹
+                {% elif "football" in task.task_name|lower %}
+                    ⚽
+                {% elif "hiking" in task.task_name|lower %}
+                    🥾
+                {% elif "running" in task.task_name|lower %}
+                    🏃
+                {% elif "swimming" in task.task_name|lower %}
+                    🏊
+                {% elif "walking" in task.task_name|lower %}
+                    🚶
+                {% elif "reading" in task.task_name|lower %}
+                    📚
+                {% elif "shopping" in task.task_name|lower %}
+                    🛍️
+                {% elif "homework" in task.task_name|lower %}
+                    📑
+                {% elif "school work" in task.task_name|lower %}
+                    📝
+                {% elif "dating" in task.task_name|lower %}
+                    💘
+                {% elif "cooking" in task.task_name|lower %}
+                    🍳
+                {% elif "cleaning" in task.task_name|lower %}
+                    🧹
+                {% elif "travelling" in task.task_name|lower %}
+                    🌍
+                {% elif "phone" in task.task_name|lower %}
+                    📱
+                {% elif "computer" in task.task_name|lower %}
+                    💻
+                {% elif "pet" in task.task_name|lower %}
+                    🐶
+                {% else %}
+                    💻 <!-- Default emoticon -->
+                {% endif %}
+            </span>
+
+            <!-- Task Name and Edit Input -->
+            <span class="task-name" id="task-name-{{ task.id }}">
+                <span id="editable-task-name-{{ task.id }}">
+                    {{ task.task_name }}
+                </span>
+                <input type="text" id="edit-input-{{ task.id }}" value="{{ task.task_name }}" style="display:none;">
+            </span>
+
+            <!-- Task Actions: Edit, Delete, Done -->
+            <div class="task-actions">
+                <!-- Edit Button -->
+                <button class="edit-button" onclick="toggleEdit({{ task.id }})">Edit</button>
+
+                <!-- Delete Button -->
+                <a href="{% url 'delete_task' task.id %}">
+                    <button class="delete-button">Delete</button>
+                </a>
+
+                <!-- Done Button -->
+                <a href="{% url 'mark_done' task.id %}">
+                    <button class="done-button">Done</button>
+                </a>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+
+<script>
+    // Function to toggle the edit input visibility and update emoticon
+    function toggleEdit(taskId) {
+        const taskNameElement = document.getElementById('editable-task-name-' + taskId);
+        const inputField = document.getElementById('edit-input-' + taskId);
+        const emoticonElement = document.getElementById('emoticon-' + taskId);
+
+        if (inputField.style.display === "none") {
+            taskNameElement.style.display = "none";
+            inputField.style.display = "inline-block";
+            inputField.focus();
+        } else {
+            taskNameElement.style.display = "inline-block";
+            inputField.style.display = "none";
+
+             // Update task name in the DOM
+            taskNameElement.textContent = inputField.value;
+
+            // Update emoticon based on new task name
+            const newTaskName = inputField.value.trim().toLowerCase();
+            if (newTaskName.includes("work")) {
+                emoticonElement.textContent = "💼";
+            } else if (newTaskName.includes("volleyball")) {
+                emoticonElement.textContent = "🏐";
+            } else if (newTaskName.includes("table tennis")) {
+                emoticonElement.textContent = "🏓";
+            } else if (newTaskName.includes("basketball")) {
+                emoticonElement.textContent = "🏀";
+            } else if (newTaskName.includes("tennis")) {
+                emoticonElement.textContent = "🎾";
+            } else if (newTaskName.includes("chess")) {
+                emoticonElement.textContent = "♟️";
+            } else if (newTaskName.includes("archery")) {
+                emoticonElement.textContent = "🏹";
+            } else if (newTaskName.includes("football")) {
+                emoticonElement.textContent = "⚽";
+            } else if (newTaskName.includes("hiking")) {
+                emoticonElement.textContent = "🥾";
+            } else if (newTaskName.includes("running")) {
+                emoticonElement.textContent = "🏃";
+            } else if (newTaskName.includes("swimming")) {
+                emoticonElement.textContent = "🏊";
+            } else if (newTaskName.includes("walking")) {
+                emoticonElement.textContent = "🚶";
+            } else if (newTaskName.includes("reading")) {
+                emoticonElement.textContent = "📚";
+            } else if (newTaskName.includes("shopping")) {
+                emoticonElement.textContent = "🛍️";
+            } else if (newTaskName.includes("homework")) {
+                emoticonElement.textContent = "📑";
+            } else if (newTaskName.includes("school work")) {
+                emoticonElement.textContent = "📝";
+            } else if (newTaskName.includes("dating")) {
+                emoticonElement.textContent = "💘";
+            } else if (newTaskName.includes("cooking")) {
+                emoticonElement.textContent = "🍳";
+            } else if (newTaskName.includes("cleaning")) {
+                emoticonElement.textContent = "🧹";
+            } else if (newTaskName.includes("travelling")) {
+                emoticonElement.textContent = "🌍";
+            } else if (newTaskName.includes("phone")) {
+                emoticonElement.textContent = "📱";
+            } else if (newTaskName.includes("computer")) {
+                emoticonElement.textContent = "💻";
+            } else if (newTaskName.includes("pet")) {
+                emoticonElement.textContent = "🐶";
+            } else {
+                emoticonElement.textContent = "💻"; // Default emoticon
+            }
+        }
+    }
+</script>
+
+</body>
+</html>
